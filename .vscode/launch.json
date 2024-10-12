@@ -20,6 +20,21 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "real_estate (release APK)",
+            "request": "launch",
+            "type": "shell",
+            "command": "flutter",
+            "args": [
+                "build",
+                "apk",
+                "--release"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$flutter-build"
+            ]
         }
     ]
 }
