@@ -1,16 +1,53 @@
-# real_estate
+# Real Estate App
 
-A new Flutter project.
+A Flutter project for a real estate application.
+
+## Design Inspiration
+
+The design for this app is inspired by [this Dribbble shot](https://dribbble.com/shots/23780608-Real-Estate-App) by Kristina Spiridonova for Purrweb UI/UX Agency.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To run this project:
 
-A few resources to get you started if this is your first Flutter project:
+1. Ensure you have Flutter installed on your machine.
+2. Clone this repository.
+3. Navigate to the project directory in your terminal.
+4. Run the following command:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+   ```
+   flutter run
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+   This will launch the app on your connected device or emulator.
+
+## Features
+
+- Home page with welcome message and popular offers
+- Map-based real estate search
+- Filtering options (price, location, infrastructure)
+- Heatmap feature for safety and convenience
+
+## Development
+
+This project uses:
+
+- Flutter for the UI
+- Dart as the programming language
+- [Add any other major libraries or frameworks used]
+
+## Useful Commands
+
+- `flutter pub get`: Install dependencies
+- `flutter clean`: Clean the project
+- `flutter test`: Run unit tests
+- `flutter build apk`: Build an Android APK
+- `flutter build ios`: Build for iOS (Mac only)
+
+## Resources
+
+For more information on Flutter development:
+
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Dart Programming Language](https://dart.dev/)
+- [Flutter Cookbook](https://docs.flutter.dev/
