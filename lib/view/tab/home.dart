@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/models/home.dart';
 import 'package:real_estate/widget/gradient_background.dart';
 import 'package:real_estate/widget/offers.dart';
 import 'package:real_estate/widget/profile_avatar.dart';
 import 'package:real_estate/app/icons.dart';
 import 'package:real_estate/widget/properties_sheet.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeModel>().animateEntrance();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +66,29 @@ class IntroText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final progress = context.watch<HomeModel>().animationProgress;
+    final animationProgress = ((progress - 0.1) / 0.1).clamp(0.0, 1.0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Hi, Marina', style: theme.textTheme.titleLarge),
+        Transform.translate(
+          offset: Offset(0, 20 * (1 - animationProgress)),
+          child: Opacity(
+            opacity: animationProgress,
+            child: Text('Hi, Marina', style: theme.textTheme.titleLarge),
+          ),
+        ),
         Gap(6.h),
-        Text(
-          "let's select your\nperfect place",
-          style: theme.textTheme.displayMedium,
+        Transform.translate(
+          offset: Offset(0, 20 * (1 - animationProgress)),
+          child: Opacity(
+            opacity: animationProgress,
+            child: Text(
+              "let's select your\nperfect place",
+              style: theme.textTheme.displayMedium,
+            ),
+          ),
         ),
       ],
     );
@@ -71,7 +101,13 @@ class LocationChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final progress = context.watch<HomeModel>().animationProgress;
+    final animationProgress = (progress / 0.1).clamp(0.0, 1.0);
+    final containerWidth = 150.w * animationProgress;
+    final textOpacity = ((animationProgress - 0.5) * 2).clamp(0.0, 1.0);
+
     return Container(
+      width: containerWidth,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -85,11 +121,20 @@ class LocationChip extends StatelessWidget {
             color: theme.colorScheme.secondary,
           ),
           Gap(4.w),
-          Text(
-            'Saint Petersburg',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.w400,
+          Expanded(
+            child: Opacity(
+              opacity: textOpacity,
+              child: Text(
+                'Saint Petersburg',
+                maxLines: 1,
+                
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12.sp,
+                ),
+                overflow: TextOverflow.clip,
+              ),
             ),
           ),
         ],

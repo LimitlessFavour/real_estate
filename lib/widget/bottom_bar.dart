@@ -12,36 +12,42 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final selectedTab = context.watch<HomeModel>().currentTab;
+    final progress = context.watch<HomeModel>().animationProgress;
+    final bottomBarProgress = ((progress - 0.8) / 0.1).clamp(0.0, 1.0);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
-      bottom: 20.h,
+      curve: Curves.easeIn,
+      bottom: 20.h * bottomBarProgress - 80.h * (1 - bottomBarProgress),
       left: 0,
       right: 0,
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-          decoration: BoxDecoration(
-            color: const Color(0xff2b2b2b),
-            borderRadius: BorderRadius.circular(32.r),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: HomeTab.values.asMap().entries.map((entry) {
-              final int index = entry.key;
-              final HomeTab tab = entry.value;
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _Button(
-                    groupValue: selectedTab,
-                    value: tab,
-                  ),
-                  if (index < HomeTab.values.length - 1) Gap(10.w),
-                ],
-              );
-            }).toList(),
+      child: Opacity(
+        opacity: bottomBarProgress,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+            decoration: BoxDecoration(
+              color: const Color(0xff2b2b2b),
+              borderRadius: BorderRadius.circular(32.r),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: HomeTab.values.asMap().entries.map((entry) {
+                final int index = entry.key;
+                final HomeTab tab = entry.value;
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _Button(
+                      groupValue: selectedTab,
+                      value: tab,
+                    ),
+                    if (index < HomeTab.values.length - 1) Gap(10.w),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),

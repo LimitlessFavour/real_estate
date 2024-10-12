@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:real_estate/app/icons.dart';
 import 'package:real_estate/app/theme.dart';
+import 'package:real_estate/models/home.dart';
 import 'package:real_estate/models/property.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:ui';
@@ -17,9 +19,13 @@ class PropertiesSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = context.watch<HomeModel>().animationProgress;
+    final sheetProgress = ((progress - 0.5) / 0.1).clamp(0.0, 1.0);
+
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
-      bottom: 0,
+      curve: Curves.easeIn,
+      bottom: -0.6.sh * (1 - sheetProgress),
       left: 0,
       right: 0,
       child: Container(
@@ -37,6 +43,7 @@ class PropertiesSheet extends StatelessWidget {
                 image: properties[0].imagePath,
                 address: properties[0].address,
                 size: PropertyCardSize.large,
+                index: 0,
               ),
             Gap(8.h),
             Expanded(
@@ -48,6 +55,7 @@ class PropertiesSheet extends StatelessWidget {
                       image: properties[1].imagePath,
                       address: properties[1].address,
                       size: PropertyCardSize.medium,
+                      index: 1,
                     ),
                   ),
                   Gap(8.w),
@@ -58,12 +66,14 @@ class PropertiesSheet extends StatelessWidget {
                           image: properties[2].imagePath,
                           address: properties[2].address,
                           size: PropertyCardSize.small,
+                          index: 2,
                         ),
                         Gap(8.h),
                         PropertyCard(
                           image: properties[3].imagePath,
                           address: properties[3].address,
                           size: PropertyCardSize.small,
+                          index: 3,
                         ),
                       ],
                     ),
@@ -84,17 +94,22 @@ class PropertyCard extends StatelessWidget {
   final String image;
   final String address;
   final PropertyCardSize size;
+  final int index;
 
   const PropertyCard({
     super.key,
     required this.image,
     required this.address,
     required this.size,
+    required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final progress = context.watch<HomeModel>().animationProgress;
+    final cardProgress = ((progress - (0.6 + index * 0.05)) / 0.1).clamp(0.0, 1.0);
+
     return Container(
       height: _getHeight(),
       decoration: BoxDecoration(
@@ -110,43 +125,52 @@ class PropertyCard extends StatelessWidget {
             left: 10.w,
             right: 10.w,
             bottom: 10.h,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32.r),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.w, vertical: 8.h),
-                          child: Text(
-                            address,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: const Color.fromRGBO(255, 255, 255, 1),
-                              fontWeight: FontWeight.w500,
+            child: Transform.translate(
+              offset: Offset(-100 * (1 - cardProgress), 0),
+              child: Opacity(
+                opacity: cardProgress,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32.r),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w, vertical: 8.h),
+                              child: Text(
+                                address,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: const Color.fromRGBO(255, 255, 255, 1),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Transform.translate(
+                            offset: Offset(100 * (1 - cardProgress), 0),
+                            child: Container(
+                              padding: EdgeInsets.all(12.w),
+                              margin: EdgeInsets.all(3.w),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: CustomIcons.arrowRightSvg(
+                                width: 8.w,
+                                height: 8.h,
+                                color: AppTheme.grey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        padding: EdgeInsets.all(12.w),
-                        margin: EdgeInsets.all(3.w),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: CustomIcons.arrowRightSvg(
-                          width: 8.w,
-                          height: 8.h,
-                          color: AppTheme.grey,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
