@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => HomeModel()),
         ChangeNotifierProvider(create: (context) => PropertyFilter()),
+        ChangeNotifierProvider(create: (_) => SearchModel()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),

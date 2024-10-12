@@ -16,7 +16,7 @@ class BottomBar extends StatelessWidget {
     final bottomBarProgress = ((progress - 0.72) / 0.08).clamp(0.0, 1.0);
 
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 600),
       curve: Curves.easeIn,
       bottom: 20.h * bottomBarProgress - 80.h * (1 - bottomBarProgress),
       left: 0,

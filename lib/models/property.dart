@@ -2,6 +2,25 @@ import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 
 enum PropertyMarkerDisplay { price, infrastructure, none }
+enum InfrastructureType { house, hotel, apartment, office, villa }
+
+class Property {
+  final String imagePath;
+  final String address;
+  final bool isCozy;
+  final double price;
+  final InfrastructureType infrastructureType;
+  final LatLng location;
+
+  const Property({
+    required this.imagePath,
+    required this.address,
+    this.isCozy = false,
+    required this.price,
+    required this.infrastructureType,
+    required this.location,
+  });
+}
 
 class PropertyFilter extends ChangeNotifier {
   bool _showCozyOnly = false;
@@ -54,22 +73,25 @@ class PropertyFilter extends ChangeNotifier {
   }
 }
 
-enum InfrastructureType { house, hotel, apartment, office, villa }
+class SearchModel extends ChangeNotifier {
+  double _animationProgress = 0.0;
 
-class Property {
-  final String imagePath;
-  final String address;
-  final bool isCozy;
-  final double price;
-  final InfrastructureType infrastructureType;
-  final LatLng location;
+  double get animationProgress => _animationProgress;
 
-  const Property({
-    required this.imagePath,
-    required this.address,
-    this.isCozy = false,
-    required this.price,
-    required this.infrastructureType,
-    required this.location,
-  });
+  void setAnimationProgress(double progress) {
+    _animationProgress = progress;
+    notifyListeners();
+  }
+
+  Future<void> animateEntrance() async {
+    const duration = Duration(milliseconds: 600);
+    final startTime = DateTime.now();
+
+    while (_animationProgress < 1.0) {
+      final elapsedTime = DateTime.now().difference(startTime);
+      _animationProgress = (elapsedTime.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 16)); // ~60 FPS
+    }
+  }
 }

@@ -29,7 +29,7 @@ class PropertiesSheet extends StatelessWidget {
       left: 0,
       right: 0,
       child: Container(
-        height: 0.6.sh,
+        height: 0.56.sh,
         width: double.infinity,
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
@@ -122,89 +122,84 @@ class PropertyCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeIn,
             left: 10.w,
-            right: 10.w,
+            right: cardProgress > 0.3 ? 10.w : 0.7.sw,
             bottom: 10.h,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32.r),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withOpacity(0.5),
-                        Colors.white.withOpacity(0.3),
-                      ],
+            child: LayoutBuilder(builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(32.r),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withOpacity(0.5),
+                          Colors.white.withOpacity(0.3),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(32.r),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1.5,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(32.r),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final maxWidth = constraints.maxWidth;
-                      return Stack(
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 1000),
-                            width: maxWidth * cardProgress,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 8.h,
-                                    ),
-                                    child: Text(
-                                      address,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style:
-                                          theme.textTheme.labelLarge?.copyWith(
-                                        color: AppTheme.fontColor,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
+                                child: Text(
+                                  address,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    color: AppTheme.fontColor,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            right: maxWidth * (1 - cardProgress),
-                            top: 0,
-                            bottom: 0,
-                            child: Center(
-                              child: Container(
-                                padding: EdgeInsets.all(10.w),
-                                margin: EdgeInsets.all(2.w),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: CustomIcons.arrowRightSvg(
-                                  width: 10.w,
-                                  height: 10.h,
-                                  color: AppTheme.grey,
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                        Positioned(
+                          right: maxWidth * (1 - cardProgress),
+                          top: 0,
+                          bottom: 0,
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.all(10.w),
+                              margin: EdgeInsets.all(2.w),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: CustomIcons.arrowRightSvg(
+                                width: 10.w,
+                                height: 10.h,
+                                color: AppTheme.grey,
+                              ),
+                            ),
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ],
       ),
