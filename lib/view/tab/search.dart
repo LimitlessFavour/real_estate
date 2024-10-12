@@ -66,7 +66,7 @@ class AnimatedSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = context.watch<SearchModel>().animationProgress;
+    final progress = context.watch<SearchModel>().widgetAnimationProgress;
     final scale = 0.5 + (0.5 * progress);
     final opacity = progress.clamp(0.0, 1.0);
 
@@ -159,7 +159,7 @@ class AnimatedFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = context.watch<SearchModel>().animationProgress;
+    final progress = context.watch<SearchModel>().widgetAnimationProgress;
     final scale = 0.5 + (0.5 * progress);
     final opacity = progress.clamp(0.0, 1.0);
 
@@ -196,7 +196,7 @@ class AnimatedActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = context.watch<SearchModel>().animationProgress;
+    final progress = context.watch<SearchModel>().widgetAnimationProgress;
     final scale = 0.5 + (0.5 * progress);
 
     return Positioned(
@@ -206,20 +206,12 @@ class AnimatedActionButtons extends StatelessWidget {
         scale: scale,
         child: Column(
           children: [
+            const ToogleState(),
+            const Gap(4),
             ActionButton(
               color: AppTheme.grey,
-              icon: CustomIcons.fatrowsSvg(
-                width: 24,
-                height: 24,
-                color: Colors.white,
-              ),
-              onPressed: null,
-            ),
-            const Gap(4),
-            const ActionButton(
-              color: AppTheme.grey,
-              icon: RotatedIcon(),
-              onPressed: null,
+              icon: const RotatedIcon(),
+              onPressed: () {},
             ),
           ],
         ),
@@ -249,7 +241,7 @@ class AnimatedVariantsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = context.watch<SearchModel>().animationProgress;
+    final progress = context.watch<SearchModel>().widgetAnimationProgress;
     final scale = 0.5 + (0.5 * progress);
 
     return Positioned(
@@ -258,6 +250,204 @@ class AnimatedVariantsButton extends StatelessWidget {
       child: Transform.scale(
         scale: scale,
         child: const VariantsButton(),
+      ),
+    );
+  }
+}
+
+class ToogleState extends StatelessWidget {
+  const ToogleState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SearchModel>(
+      builder: (context, searchModel, child) {
+        return ActionButton(
+          color: AppTheme.grey,
+          icon: CustomIcons.fatrowsSvg(
+            width: 24,
+            height: 24,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            searchModel.toggleFilterMenu();
+            if (searchModel.isFilterMenuOpen) {
+              _showFilterMenu(context);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _showFilterMenu(BuildContext context) {
+    final searchModel = Provider.of<SearchModel>(context, listen: false);
+    OverlayEntry? entry;
+
+    entry = OverlayEntry(
+      builder: (context) => FilterMenu(
+        onDismiss: () {
+          searchModel.closeFilterMenu();
+          entry?.remove();
+        },
+      ),
+    );
+
+    Overlay.of(context).insert(entry);
+  }
+}
+
+class FilterMenu extends StatefulWidget {
+  final VoidCallback onDismiss;
+
+  const FilterMenu({super.key, required this.onDismiss});
+
+  @override
+  State<FilterMenu> createState() => _FilterMenuState();
+}
+
+class _FilterMenuState extends State<FilterMenu> {
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _isVisible = true;
+      });
+    });
+  }
+
+  void _dismiss() {
+    setState(() {
+      _isVisible = false;
+    });
+    Future.delayed(const Duration(milliseconds: 300), widget.onDismiss);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final propertyFilter = Provider.of<PropertyFilter>(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        opacity: _isVisible ? 1.0 : 0.0,
+        child: GestureDetector(
+          onTap: _dismiss,
+          child: Container(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 40.w,
+                  bottom: 140.h,
+                  child: GestureDetector(
+                    onTap: () {}, // Prevent taps on the menu from dismissing it
+                    child: Container(
+                      width: 170.w,
+                      padding: EdgeInsets.all(14.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFBF5EB),
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildMenuItem(
+                            'Cosy areas',
+                            CustomIcons.heartSvg,
+                            isSelected: propertyFilter.showCozyOnly,
+                            onPressed: () => propertyFilter
+                                .setShowCozyOnly(!propertyFilter.showCozyOnly),
+                          ),
+                          _buildMenuItem(
+                            'Price',
+                            CustomIcons.buildingSvg,
+                            isSelected: propertyFilter.markerDisplay ==
+                                PropertyMarkerDisplay.price,
+                            onPressed: () => propertyFilter
+                                .setMarkerDisplay(PropertyMarkerDisplay.price),
+                          ),
+                          _buildMenuItem(
+                            'Infrastructure',
+                            CustomIcons.candleSvg,
+                            isSelected: propertyFilter.markerDisplay ==
+                                PropertyMarkerDisplay.infrastructure,
+                            onPressed: () => propertyFilter.setMarkerDisplay(
+                                PropertyMarkerDisplay.infrastructure),
+                          ),
+                          _buildMenuItem(
+                            'Without any layer',
+                            CustomIcons.homeSvg,
+                            isSelected: propertyFilter.markerDisplay ==
+                                PropertyMarkerDisplay.none,
+                            onPressed: () => propertyFilter
+                                .setMarkerDisplay(PropertyMarkerDisplay.none),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    String text,
+    Widget Function({double? width, double? height, Color? color})
+        iconBuilder, {
+    required bool isSelected,
+    required VoidCallback onPressed,
+  }) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Row(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: SizedBox(
+                key: ValueKey<bool>(isSelected),
+                width: 20.w,
+                height: 20.w,
+                child: iconBuilder(
+                  color: isSelected ? AppTheme.primaryColor : Colors.black,
+                ),
+              ),
+            ),
+            Gap(12.w),
+            Expanded(
+              child: AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 300),
+                style: theme.textTheme.labelLarge!.copyWith(
+                  color: isSelected
+                      ? AppTheme.primaryColor
+                      : theme.colorScheme.secondary,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12.sp,
+                ),
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

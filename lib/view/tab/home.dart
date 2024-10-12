@@ -17,6 +17,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<PropertiesSheetState> _propertiesSheetKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -28,33 +30,42 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return GradientBackground(
-      child: Stack(
-        children: [
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(16.0.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      LocationChip(),
-                      ProfileAvatar(),
-                    ],
-                  ),
-                  Gap(32.h),
-                  const IntroText(),
-                  Gap(24.h),
-                  const OffersSection(),
-                  Gap(24.h),
-                ],
+      child: GestureDetector(
+        onTap: () {
+          // Reset the PropertiesSheet position when tapping the home screen
+          _propertiesSheetKey.currentState?.resetPosition();
+        },
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(16.0.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LocationChip(),
+                        ProfileAvatar(),
+                      ],
+                    ),
+                    Gap(32.h),
+                    const IntroText(),
+                    Gap(24.h),
+                    const OffersSection(),
+                    Gap(24.h),
+                  ],
+                ),
               ),
             ),
-          ),
-          const PropertiesSheet(properties: dummyProperties),
-        ],
+            PropertiesSheet(
+              key: _propertiesSheetKey,
+              properties: dummyProperties,
+            ),
+          ],
+        ),
       ),
     );
   }

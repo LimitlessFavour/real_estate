@@ -77,6 +77,22 @@ class SearchModel extends ChangeNotifier {
   double _animationProgress = 0.0;
 
   double get animationProgress => _animationProgress;
+  
+  double get widgetAnimationProgress => (_animationProgress * 2).clamp(0.0, 1.0);
+
+  bool _isFilterMenuOpen = false;
+
+  bool get isFilterMenuOpen => _isFilterMenuOpen;
+
+  void toggleFilterMenu() {
+    _isFilterMenuOpen = !_isFilterMenuOpen;
+    notifyListeners();
+  }
+
+  void closeFilterMenu() {
+    _isFilterMenuOpen = false;
+    notifyListeners();
+  }
 
   void setAnimationProgress(double progress) {
     _animationProgress = progress;
@@ -84,7 +100,7 @@ class SearchModel extends ChangeNotifier {
   }
 
   Future<void> animateEntrance() async {
-    const duration = Duration(milliseconds: 600);
+    const duration = Duration(milliseconds: 1200); // Doubled duration
     final startTime = DateTime.now();
 
     while (_animationProgress < 1.0) {

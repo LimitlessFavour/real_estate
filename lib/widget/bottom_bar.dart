@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate/app/icons.dart';
 import 'package:real_estate/models/home.dart';
+import 'package:real_estate/widget/properties_sheet.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
@@ -67,6 +68,7 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final theme = Theme.of(context);
     final selected = groupValue == value;
     final color = selected
@@ -74,7 +76,9 @@ class _Button extends StatelessWidget {
         : theme.colorScheme.onSurface.withOpacity(0.6);
 
     return GestureDetector(
-      onTap: () => context.read<HomeModel>().setHomeTab(value),
+      onTap: () {
+        context.read<HomeModel>().setHomeTab(value);
+      },
       child: AnimatedContainer(
         height: _getBottomBarHeight(theme),
         duration: const Duration(milliseconds: 300),

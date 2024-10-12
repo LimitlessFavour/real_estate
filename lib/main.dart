@@ -18,7 +18,7 @@ Future<void> main() async {
 
   runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      enabled: kDebugMode,
       builder: (context) => const MyApp(),
     ),
   );

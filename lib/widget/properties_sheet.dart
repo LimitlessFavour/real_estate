@@ -1,15 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate/app/icons.dart';
 import 'package:real_estate/app/theme.dart';
 import 'package:real_estate/models/home.dart';
 import 'package:real_estate/models/property.dart';
-import 'package:latlong2/latlong.dart';
-import 'dart:ui';
 
-class PropertiesSheet extends StatelessWidget {
+class PropertiesSheet extends StatefulWidget {
   final List<Property> properties;
 
   const PropertiesSheet({
@@ -18,70 +19,133 @@ class PropertiesSheet extends StatelessWidget {
   });
 
   @override
+  State<PropertiesSheet> createState() => PropertiesSheetState();
+}
+
+class PropertiesSheetState extends State<PropertiesSheet> {
+  double _dragOffset = 0;
+  late final double _maxDragOffset;
+  bool manualDragging = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _maxDragOffset = _calculateMaxDragOffset();
+  }
+
+  void resetPosition() {
+    print('resetPosition called');
+    setState(() {
+      manualDragging = true;
+      _dragOffset = _maxDragOffset;
+    });
+    print('manualDragging: $manualDragging');
+  }
+
+  double _calculateMaxDragOffset() {
+    final screenHeight = 1.sh;
+    print('screenHeight: $screenHeight');
+
+    // Calculate the max drag offset based on screen size
+    // For smaller screens, use a smaller percentage
+    if (screenHeight < 700) {
+      return 0.1.sh; // 15% of screen height for smaller screens
+    } else if (screenHeight < 800) {
+      return 0.18.sh; // 18% of screen height for medium screens
+    } else {
+      return 0.2.sh; // 20% of screen height for larger screens
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final progress = context.watch<HomeModel>().animationProgress;
     final sheetProgress = ((progress - 0.44) / 0.1).clamp(0.0, 1.0);
+    final properties = widget.properties;
 
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 800),
+      duration: Duration(milliseconds: manualDragging ? 300 : 800),
       curve: Curves.easeIn,
-      bottom: -0.6.sh * (1 - sheetProgress),
+      bottom: -0.6.sh * (1 - sheetProgress) - _dragOffset,
       left: 0,
       right: 0,
-      child: Container(
-        height: 0.56.sh,
-        width: double.infinity,
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-        ),
-        child: Column(
-          children: [
-            if (properties.isNotEmpty)
-              PropertyCard(
-                image: properties[0].imagePath,
-                address: properties[0].address,
-                size: PropertyCardSize.large,
-                index: 0,
-              ),
-            Gap(8.h),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: PropertyCard(
-                      image: properties[1].imagePath,
-                      address: properties[1].address,
-                      size: PropertyCardSize.medium,
-                      index: 1,
+      child: GestureDetector(
+        onVerticalDragUpdate: (details) {
+          manualDragging = true;
+          if (sheetProgress == 1.0) {
+            setState(() {
+              _dragOffset += details.delta.dy;
+              _dragOffset = _dragOffset.clamp(0.0, _maxDragOffset);
+            });
+          }
+        },
+        onVerticalDragEnd: (details) {
+          manualDragging = false;
+          if (_dragOffset > _maxDragOffset / 2) {
+            setState(() {
+              _dragOffset = _maxDragOffset;
+            });
+          } else {
+            setState(() {
+              _dragOffset = 0;
+            });
+          }
+        },
+        child: Container(
+          height: 0.54.sh,
+          width: double.infinity,
+          padding: EdgeInsets.all(8.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+          ),
+          child: Column(
+            children: [
+              if (properties.isNotEmpty)
+                PropertyCard(
+                  image: properties[0].imagePath,
+                  address: properties[0].address,
+                  size: PropertyCardSize.large,
+                  index: 0,
+                ),
+              Gap(8.h),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: PropertyCard(
+                        image: properties[1].imagePath,
+                        address: properties[1].address,
+                        size: PropertyCardSize.medium,
+                        index: 1,
+                      ),
                     ),
-                  ),
-                  Gap(8.w),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        PropertyCard(
-                          image: properties[2].imagePath,
-                          address: properties[2].address,
-                          size: PropertyCardSize.small,
-                          index: 2,
-                        ),
-                        Gap(8.h),
-                        PropertyCard(
-                          image: properties[3].imagePath,
-                          address: properties[3].address,
-                          size: PropertyCardSize.small,
-                          index: 3,
-                        ),
-                      ],
+                    Gap(8.w),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          PropertyCard(
+                            image: properties[2].imagePath,
+                            address: properties[2].address,
+                            size: PropertyCardSize.small,
+                            index: 2,
+                          ),
+                          Gap(8.h),
+                          PropertyCard(
+                            image: properties[3].imagePath,
+                            address: properties[3].address,
+                            size: PropertyCardSize.small,
+                            index: 3,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
