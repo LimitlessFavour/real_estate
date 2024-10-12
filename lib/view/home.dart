@@ -22,10 +22,10 @@ class HomePage extends StatelessWidget {
           AppIndexedStack(
             index: selectedTab.index,
             children: const [
-              Home(),
               Search(),
-              Favourites(),
               Chat(),
+              Home(),
+              Favourites(),
               Profile(),
             ],
           ),

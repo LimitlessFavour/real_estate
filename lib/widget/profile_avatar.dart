@@ -8,7 +8,7 @@ class ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 20.r,
-      backgroundImage: const AssetImage('assets/images/portrait.png'),
+      backgroundImage: const AssetImage('assets/images/portrait.jpeg'),
     );
   }
 }

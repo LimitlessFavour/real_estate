@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,7 +17,7 @@ class OffersSection extends StatelessWidget {
             isSelected: true,
           ),
         ),
-        SizedBox(width: 16.w),
+        // Gap(4.w),
         const Expanded(
           child: OfferCard(
             type: 'RENT',
@@ -44,40 +45,46 @@ class OfferCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final buy = type == 'BUY';
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: isSelected ? theme.colorScheme.primary : Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: buy ? null : BorderRadius.circular(16.r),
+        shape: buy ? BoxShape.circle : BoxShape.rectangle,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             type,
             style: GoogleFonts.inter(
-              fontSize: 14.sp,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w500,
               color: isSelected ? Colors.white : theme.colorScheme.secondary,
             ),
           ),
-          SizedBox(height: 8.h),
+          Gap(16.h),
           Text(
             count.toString(),
             style: GoogleFonts.inter(
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : theme.colorScheme.primary,
+              color: isSelected ? Colors.white : theme.colorScheme.secondary,
             ),
           ),
+          // Gap(4.h),
           Text(
             'offers',
             style: GoogleFonts.inter(
-              fontSize: 14.sp,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w500,
-              color: isSelected ? Colors.white.withOpacity(0.7) : theme.colorScheme.secondary,
+              color: isSelected
+                  ? Colors.white.withOpacity(0.7)
+                  : theme.colorScheme.secondary,
             ),
           ),
+          Gap(8.h),
         ],
       ),
     );

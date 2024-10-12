@@ -1,62 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:real_estate/widget/gradient_background.dart';
 import 'package:real_estate/widget/offers.dart';
 import 'package:real_estate/widget/profile_avatar.dart';
-
-
+import 'package:real_estate/app/icons.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(16.0.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                LocationChip(),
-                ProfileAvatar(),
-              ],
-            ),
-            Gap(32.h),
-            const IntroText(),
-            Gap(24.h),
-            const OffersSection(),
-            Gap(24.h),
-            const PropertyCard(
-              image: 'assets/images/property1.jpeg',
-              address: 'Gladkova St., 25',
-            ),
-            Gap(16.h),
-            Row(
-              children: [
-                const Expanded(
-                  child: PropertyCard(
-                    image: 'assets/images/property2.jpeg',
-                    address: '',
-                    small: true,
-                  ),
-                ),
-                Gap(16.h),
-                const Expanded(
-                  child: PropertyCard(
-                    image: 'assets/images/property3.jpeg',
-                    address: 'Trefoleva St., 43',
-                    small: true,
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return GradientBackground(
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.0.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  LocationChip(),
+                  ProfileAvatar(),
+                ],
+              ),
+              Gap(32.h),
+              const IntroText(),
+              Gap(24.h),
+              const OffersSection(),
+              Gap(24.h),
+              const PropertiesSheet(),
+            ],
+          ),
         ),
       ),
     );
@@ -79,10 +56,13 @@ class IntroText extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        Gap(4.h),
+        Gap(6.h),
         Text(
           "let's select your\nperfect place",
-          style: theme.textTheme.displayLarge,
+          style: theme.textTheme.displayLarge?.copyWith(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -103,8 +83,9 @@ class LocationChip extends StatelessWidget {
       ),
       child: Row(
         children: [
-          FaIcon(
-            FontAwesomeIcons.locationDot,
+          CustomIcons.locationSvg(
+            width: 16.w,
+            height: 16.h,
             color: theme.colorScheme.secondary,
           ),
           Gap(4.w),
@@ -117,6 +98,42 @@ class LocationChip extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class PropertiesSheet extends StatelessWidget {
+  const PropertiesSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const PropertyCard(
+          image: 'assets/images/property1.jpeg',
+          address: 'Gladkova St., 25',
+        ),
+        Gap(16.h),
+        Row(
+          children: [
+            const Expanded(
+              child: PropertyCard(
+                image: 'assets/images/property2.jpeg',
+                address: '',
+                small: true,
+              ),
+            ),
+            Gap(16.h),
+            const Expanded(
+              child: PropertyCard(
+                image: 'assets/images/property3.jpeg',
+                address: 'Trefoleva St., 43',
+                small: true,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -161,7 +178,11 @@ class PropertyCard extends StatelessWidget {
                     ),
                   ),
                   Gap(4.w),
-                  Icon(Icons.arrow_forward, color: Colors.white, size: 16.sp),
+                  CustomIcons.rightSvg(
+                    width: 16.w,
+                    height: 16.h,
+                    color: Colors.white,
+                  ),
                 ],
               ),
             ),
