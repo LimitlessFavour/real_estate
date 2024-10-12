@@ -10,8 +10,8 @@ class OffersSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = context.watch<HomeModel>().animationProgress;
-    final entranceProgress = ((progress - 0.3) / 0.2).clamp(0.0, 1.0);
-    final countProgress = ((progress - 0.3) / 0.2).clamp(0.0, 1.0);
+    final entranceProgress = ((progress - 0.3) / 0.07).clamp(0.0, 1.0);
+    final countProgress = ((progress - 0.3) / 0.14).clamp(0.0, 1.0);
 
     return Transform.translate(
       offset: Offset(0, 50 * (1 - entranceProgress)),
@@ -27,6 +27,7 @@ class OffersSection extends StatelessWidget {
                 animationProgress: countProgress,
               ),
             ),
+            Gap(12.w),
             Expanded(
               child: OfferCard(
                 type: 'RENT',
@@ -61,40 +62,44 @@ class OfferCard extends StatelessWidget {
     final theme = Theme.of(context);
     final buy = type == 'BUY';
     final animatedCount = (count * animationProgress).round();
+    final scale = 1 + (animationProgress * 0.1);
 
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: isSelected ? theme.colorScheme.primary : Colors.white,
-        borderRadius: buy ? null : BorderRadius.circular(16.r),
-        shape: buy ? BoxShape.circle : BoxShape.rectangle,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            type,
-            style: theme.textTheme.labelSmall!.copyWith(
-              color: isSelected ? Colors.white : theme.colorScheme.secondary,
+    return Transform.scale(
+      scale: scale,
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary : Colors.white,
+          borderRadius: buy ? null : BorderRadius.circular(16.r),
+          shape: buy ? BoxShape.circle : BoxShape.rectangle,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              type,
+              style: theme.textTheme.labelSmall!.copyWith(
+                color: isSelected ? Colors.white : theme.colorScheme.secondary,
+              ),
             ),
-          ),
-          Gap(16.h),
-          Text(
-            animatedCount.toString(),
-            style: theme.textTheme.displaySmall!.copyWith(
-              color: isSelected ? Colors.white : theme.colorScheme.secondary,
+            Gap(16.h),
+            Text(
+              animatedCount.toString(),
+              style: theme.textTheme.displaySmall!.copyWith(
+                color: isSelected ? Colors.white : theme.colorScheme.secondary,
+              ),
             ),
-          ),
-          Text(
-            'offers',
-            style: theme.textTheme.labelSmall!.copyWith(
-              color: isSelected
-                  ? Colors.white.withOpacity(0.7)
-                  : theme.colorScheme.secondary,
+            Text(
+              'offers',
+              style: theme.textTheme.labelSmall!.copyWith(
+                color: isSelected
+                    ? Colors.white.withOpacity(0.7)
+                    : theme.colorScheme.secondary,
+              ),
             ),
-          ),
-          Gap(8.h),
-        ],
+            Gap(8.h),
+          ],
+        ),
       ),
     );
   }

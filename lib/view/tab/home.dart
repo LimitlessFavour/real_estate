@@ -104,7 +104,7 @@ class LocationChip extends StatelessWidget {
     final progress = context.watch<HomeModel>().animationProgress;
     final animationProgress = (progress / 0.1).clamp(0.0, 1.0);
     final containerWidth = 150.w * animationProgress;
-    final textOpacity = ((animationProgress - 0.5) * 2).clamp(0.0, 1.0);
+    final showContent = animationProgress > 0.9;
 
     return Container(
       width: containerWidth,
@@ -113,32 +113,40 @@ class LocationChip extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.r),
       ),
-      child: Row(
-        children: [
-          CustomIcons.locationSvg(
-            width: 16.w,
-            height: 16.h,
-            color: theme.colorScheme.secondary,
-          ),
-          Gap(4.w),
-          Expanded(
-            child: Opacity(
-              opacity: textOpacity,
-              child: Text(
-                'Saint Petersburg',
-                maxLines: 1,
-                
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: theme.colorScheme.secondary,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12.sp,
-                ),
-                overflow: TextOverflow.clip,
-              ),
-            ),
-          ),
-        ],
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        switchInCurve: Curves.easeIn,
+        switchOutCurve: Curves.easeIn,
+        child: showContent
+            ? _buildContent(theme)
+            : SizedBox(key: const ValueKey('empty'), height: 16.h),
       ),
+    );
+  }
+
+  Widget _buildContent(ThemeData theme) {
+    return Row(
+      key: const ValueKey('content'),
+      children: [
+        CustomIcons.locationSvg(
+          width: 16.w,
+          height: 16.h,
+          color: theme.colorScheme.secondary,
+        ),
+        Gap(4.w),
+        Expanded(
+          child: Text(
+            'Saint Petersburg',
+            maxLines: 1,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: theme.colorScheme.secondary,
+              fontWeight: FontWeight.w400,
+              fontSize: 12.sp,
+            ),
+            overflow: TextOverflow.clip,
+          ),
+        ),
+      ],
     );
   }
 }

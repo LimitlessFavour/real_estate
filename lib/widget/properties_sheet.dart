@@ -20,10 +20,10 @@ class PropertiesSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = context.watch<HomeModel>().animationProgress;
-    final sheetProgress = ((progress - 0.5) / 0.1).clamp(0.0, 1.0);
+    final sheetProgress = ((progress - 0.44) / 0.1).clamp(0.0, 1.0);
 
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 800),
       curve: Curves.easeIn,
       bottom: -0.6.sh * (1 - sheetProgress),
       left: 0,
@@ -108,7 +108,8 @@ class PropertyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final progress = context.watch<HomeModel>().animationProgress;
-    final cardProgress = ((progress - (0.6 + index * 0.05)) / 0.1).clamp(0.0, 1.0);
+    final cardProgress =
+        ((progress - (0.54 + index * 0.03)) / 0.06).clamp(0.0, 1.0);
 
     return Container(
       height: _getHeight(),
@@ -125,52 +126,81 @@ class PropertyCard extends StatelessWidget {
             left: 10.w,
             right: 10.w,
             bottom: 10.h,
-            child: Transform.translate(
-              offset: Offset(-100 * (1 - cardProgress), 0),
-              child: Opacity(
-                opacity: cardProgress,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32.r),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.3),
-                      child: Row(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32.r),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withOpacity(0.5),
+                        Colors.white.withOpacity(0.3),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(32.r),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final maxWidth = constraints.maxWidth;
+                      return Stack(
                         children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w, vertical: 8.h),
-                              child: Text(
-                                address,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: const Color.fromRGBO(255, 255, 255, 1),
-                                  fontWeight: FontWeight.w500,
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 1000),
+                            width: maxWidth * cardProgress,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 8.h,
+                                    ),
+                                    child: Text(
+                                      address,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          theme.textTheme.labelLarge?.copyWith(
+                                        color: AppTheme.fontColor,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            right: maxWidth * (1 - cardProgress),
+                            top: 0,
+                            bottom: 0,
+                            child: Center(
+                              child: Container(
+                                padding: EdgeInsets.all(10.w),
+                                margin: EdgeInsets.all(2.w),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: CustomIcons.arrowRightSvg(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  color: AppTheme.grey,
                                 ),
                               ),
                             ),
                           ),
-                          Transform.translate(
-                            offset: Offset(100 * (1 - cardProgress), 0),
-                            child: Container(
-                              padding: EdgeInsets.all(12.w),
-                              margin: EdgeInsets.all(3.w),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: CustomIcons.arrowRightSvg(
-                                width: 8.w,
-                                height: 8.h,
-                                color: AppTheme.grey,
-                              ),
-                            ),
-                          ),
                         ],
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),

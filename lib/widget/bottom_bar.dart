@@ -13,7 +13,7 @@ class BottomBar extends StatelessWidget {
     final theme = Theme.of(context);
     final selectedTab = context.watch<HomeModel>().currentTab;
     final progress = context.watch<HomeModel>().animationProgress;
-    final bottomBarProgress = ((progress - 0.8) / 0.1).clamp(0.0, 1.0);
+    final bottomBarProgress = ((progress - 0.72) / 0.08).clamp(0.0, 1.0);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
