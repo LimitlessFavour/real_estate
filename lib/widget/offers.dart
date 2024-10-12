@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OffersSection extends StatelessWidget {
@@ -8,9 +7,9 @@ class OffersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       children: [
-        const Expanded(
+        Expanded(
           child: OfferCard(
             type: 'BUY',
             count: 1034,
@@ -18,7 +17,7 @@ class OffersSection extends StatelessWidget {
           ),
         ),
         // Gap(4.w),
-        const Expanded(
+        Expanded(
           child: OfferCard(
             type: 'RENT',
             count: 2212,
@@ -58,27 +57,20 @@ class OfferCard extends StatelessWidget {
         children: [
           Text(
             type,
-            style: GoogleFonts.inter(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
+            style: theme.textTheme.labelSmall!.copyWith(
               color: isSelected ? Colors.white : theme.colorScheme.secondary,
             ),
           ),
           Gap(16.h),
           Text(
             count.toString(),
-            style: GoogleFonts.inter(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
+            style: theme.textTheme.displaySmall!.copyWith(
               color: isSelected ? Colors.white : theme.colorScheme.secondary,
             ),
           ),
-          // Gap(4.h),
           Text(
             'offers',
-            style: GoogleFonts.inter(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
+            style: theme.textTheme.labelSmall!.copyWith(
               color: isSelected
                   ? Colors.white.withOpacity(0.7)
                   : theme.colorScheme.secondary,

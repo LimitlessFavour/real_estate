@@ -40,6 +40,10 @@ class CustomIcons {
     return _svgIcon('right', width, height, color);
   }
 
+  static Widget arrowRightSvg({double? width, double? height, Color? color}) {
+    return _svgIcon('arrow_right', width, height, color);
+  }
+
   static Widget searchSvg({double? width, double? height, Color? color}) {
     return _svgIcon('search', width, height, color);
   }

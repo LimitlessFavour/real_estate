@@ -15,12 +15,12 @@ class BottomBar extends StatelessWidget {
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
-      bottom: 30.h,
+      bottom: 20.h,
       left: 0,
       right: 0,
       child: Center(
         child: Container(
-          padding: EdgeInsets.all(8.w),
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
           decoration: BoxDecoration(
             color: const Color(0xff2b2b2b),
             borderRadius: BorderRadius.circular(32.r),
@@ -74,8 +74,7 @@ class _Button extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.all(selected ? 12.w : 8.w),
         decoration: BoxDecoration(
-          color:
-              selected ? theme.colorScheme.tertiary : const Color(0xff232220),
+          color: selected ? theme.colorScheme.primary : const Color(0xff232220),
           shape: BoxShape.circle,
         ),
         child: Column(
