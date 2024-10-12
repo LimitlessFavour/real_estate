@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:real_estate/app/icons.dart';
+import 'package:real_estate/app/theme.dart';
 import 'package:real_estate/models/property.dart';
+import 'package:latlong2/latlong.dart';
+import 'dart:ui';
 
 class PropertiesSheet extends StatelessWidget {
   final List<Property> properties;
@@ -14,8 +17,6 @@ class PropertiesSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
       bottom: 0,
@@ -24,17 +25,10 @@ class PropertiesSheet extends StatelessWidget {
       child: Container(
         height: 0.6.sh,
         width: double.infinity,
-        padding: EdgeInsets.only(
-          top: 8.w,
-          left: 8.w,
-          right: 8.w,
-        ),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.horizontal(
-            left: Radius.circular(16.r),
-            right: Radius.circular(16.r),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
         ),
         child: Column(
           children: [
@@ -42,21 +36,39 @@ class PropertiesSheet extends StatelessWidget {
               PropertyCard(
                 image: properties[0].imagePath,
                 address: properties[0].address,
+                size: PropertyCardSize.large,
               ),
-            Gap(16.h),
+            Gap(8.h),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16.h,
-                crossAxisSpacing: 16.w,
-                childAspectRatio: 1.5,
-                children: properties.skip(1).map((property) {
-                  return PropertyCard(
-                    image: property.imagePath,
-                    address: property.address,
-                    small: true,
-                  );
-                }).toList(),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: PropertyCard(
+                      image: properties[1].imagePath,
+                      address: properties[1].address,
+                      size: PropertyCardSize.medium,
+                    ),
+                  ),
+                  Gap(8.w),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        PropertyCard(
+                          image: properties[2].imagePath,
+                          address: properties[2].address,
+                          size: PropertyCardSize.small,
+                        ),
+                        Gap(8.h),
+                        PropertyCard(
+                          image: properties[3].imagePath,
+                          address: properties[3].address,
+                          size: PropertyCardSize.small,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -66,23 +78,25 @@ class PropertiesSheet extends StatelessWidget {
   }
 }
 
+enum PropertyCardSize { small, medium, large }
+
 class PropertyCard extends StatelessWidget {
   final String image;
   final String address;
-  final bool small;
+  final PropertyCardSize size;
 
   const PropertyCard({
     super.key,
     required this.image,
     required this.address,
-    this.small = false,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      height: small ? 120.h : 200.h,
+      height: _getHeight(),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
         image: DecorationImage(
@@ -92,37 +106,166 @@ class PropertyCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          if (address.isNotEmpty)
-            Positioned(
-              left: 16.w,
-              bottom: 16.h,
-              child: Row(
-                children: [
-                  Text(
-                    address,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
+          Positioned(
+            left: 10.w,
+            right: 10.w,
+            bottom: 10.h,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32.r),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.w, vertical: 8.h),
+                          child: Text(
+                            address,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: const Color.fromRGBO(255, 255, 255, 1),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(12.w),
+                        margin: EdgeInsets.all(3.w),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: CustomIcons.arrowRightSvg(
+                          width: 8.w,
+                          height: 8.h,
+                          color: AppTheme.grey,
+                        ),
+                      ),
+                    ],
                   ),
-                  Gap(4.w),
-                  CustomIcons.rightSvg(
-                    width: 16.w,
-                    height: 16.h,
-                    color: Colors.white,
-                  ),
-                ],
+                ),
               ),
             ),
+          ),
         ],
       ),
     );
   }
+
+  double _getHeight() {
+    switch (size) {
+      case PropertyCardSize.small:
+        return 94.h;
+      case PropertyCardSize.medium:
+        return 200.h;
+      case PropertyCardSize.large:
+        return 150.h;
+    }
+  }
 }
 
 const List<Property> dummyProperties = [
-  Property(imagePath: 'assets/images/property1.jpeg', address: 'Gladkova St., 25'),
-  Property(imagePath: 'assets/images/property2.jpeg', address: 'Nevsky Prospekt, 78'),
-  Property(imagePath: 'assets/images/property3.jpeg', address: 'Trefoleva St., 43'),
-  Property(imagePath: 'assets/images/property4.jpeg', address: 'Bolshaya Morskaya St., 12'),
+  Property(
+      imagePath: 'assets/images/property1.jpeg',
+      address: 'Gladkova St., 25',
+      isCozy: true,
+      price: 250000,
+      infrastructureType: InfrastructureType.house,
+      location: LatLng(59.9352802, 30.3360986)),
+  Property(
+      imagePath: 'assets/images/property2.jpeg',
+      address: 'Nevsky Prospekt, 78',
+      isCozy: false,
+      price: 500000,
+      infrastructureType: InfrastructureType.hotel,
+      location: LatLng(59.9332802, 30.3340986)),
+  Property(
+      imagePath: 'assets/images/property3.jpeg',
+      address: 'Trefoleva St., 43',
+      isCozy: true,
+      price: 180000,
+      infrastructureType: InfrastructureType.apartment,
+      location: LatLng(59.9362802, 30.3370986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Bolshaya Morskaya St., 12',
+      isCozy: false,
+      price: 750000,
+      infrastructureType: InfrastructureType.office,
+      location: LatLng(59.9322802, 30.3330986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Liteyny Prospekt, 59',
+      isCozy: true,
+      price: 320000,
+      infrastructureType: InfrastructureType.house,
+      location: LatLng(59.9372802, 30.3380986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Kamennoostrovsky Prospekt, 37',
+      isCozy: false,
+      price: 1200000,
+      infrastructureType: InfrastructureType.villa,
+      location: LatLng(59.9312802, 30.3320986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Gorokhovaya St., 64',
+      isCozy: true,
+      price: 210000,
+      infrastructureType: InfrastructureType.apartment,
+      location: LatLng(59.9382802, 30.3390986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Fontanka River Embankment, 90',
+      isCozy: false,
+      price: 450000,
+      infrastructureType: InfrastructureType.hotel,
+      location: LatLng(59.9302802, 30.3310986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Marata St., 22',
+      isCozy: true,
+      price: 280000,
+      infrastructureType: InfrastructureType.house,
+      location: LatLng(59.9392802, 30.3400986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Sadovaya St., 55',
+      isCozy: false,
+      price: 390000,
+      infrastructureType: InfrastructureType.office,
+      location: LatLng(59.9292802, 30.3300986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Petrogradskaya Embankment, 8',
+      isCozy: true,
+      price: 850000,
+      infrastructureType: InfrastructureType.villa,
+      location: LatLng(59.9402802, 30.3410986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Moskovsky Prospekt, 130',
+      isCozy: false,
+      price: 420000,
+      infrastructureType: InfrastructureType.hotel,
+      location: LatLng(59.9282802, 30.3290986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Ligovsky Prospekt, 72',
+      isCozy: true,
+      price: 195000,
+      infrastructureType: InfrastructureType.apartment,
+      location: LatLng(59.9412802, 30.3420986)),
+  Property(
+      imagePath: 'assets/images/property4.jpeg',
+      address: 'Vasilyevsky Island, 7th Line, 34',
+      isCozy: false,
+      price: 560000,
+      infrastructureType: InfrastructureType.office,
+      location: LatLng(59.9272802, 30.3280986)),
 ];

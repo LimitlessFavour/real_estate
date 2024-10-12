@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate/app/theme.dart';
 import 'package:real_estate/models/home.dart';
+import 'package:real_estate/models/property.dart';
 import 'package:real_estate/view/home.dart';
 
 Future<void> main() async {
@@ -28,22 +29,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => HomeModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => HomeModel()),
+        ChangeNotifierProvider(create: (context) => PropertyFilter()),
+      ],
       child: ScreenUtilInit(
-          designSize: const Size(360, 690),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return MaterialApp(
-              useInheritedMediaQuery: true,
-              locale: DevicePreview.locale(context),
-              builder: DevicePreview.appBuilder,
-              title: 'Real Estate',
-              theme: AppTheme.themeData,
-              home: const HomePage(),
-            );
-          }),
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            title: 'Real Estate',
+            theme: AppTheme.themeData,
+            home: const HomePage(),
+          );
+        },
+      ),
     );
   }
 }

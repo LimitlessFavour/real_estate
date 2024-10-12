@@ -84,7 +84,7 @@ class VariantsButton extends StatelessWidget {
                   Text(
                     'List of Variants',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w400, color: Colors.white),
+                        fontWeight: FontWeight.w500, color: Colors.white),
                   ),
                 ],
               ),

@@ -15,7 +15,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_map: ^7.0.2
-  flutter_map_marker_cluster:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.10+1
   gap: ^3.0.1
