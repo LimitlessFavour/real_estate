@@ -36,6 +36,7 @@ class OffersSection extends StatelessWidget {
                 animationProgress: countProgress,
               ),
             ),
+            Gap(6.w),
           ],
         ),
       ),
